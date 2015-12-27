@@ -67,4 +67,14 @@ public class ProductsController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @RequestMapping(value = "/products/{productId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteProduct(@PathVariable("productId") Long productId) {
+        try {
+            productService.delete(productId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

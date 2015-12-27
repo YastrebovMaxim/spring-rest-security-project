@@ -27,6 +27,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -98,7 +99,7 @@ public class ProductsControllerTest {
     }
 
     @Test
-    public void testFindNonExistingDish() throws Exception {
+    public void testFindNonExistingProduct() throws Exception {
         when(productServiceMock.findById(any(Long.class))).thenReturn(null);
 
         mockMvc.perform(get("/api/version/products/1"))
@@ -128,5 +129,14 @@ public class ProductsControllerTest {
         Product productForUpdate = productArgumentCaptor.getValue();
         assertThat(productForUpdate.getProductName(), equalTo("table"));
         assertThat(productForUpdate.getCost(), equalTo(14L));
+    }
+
+    @Test
+    public void testDeleteDish() throws Exception {
+        mockMvc.perform(delete("/api/version/products/1"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(productServiceMock).delete(eq(1L));
     }
 }

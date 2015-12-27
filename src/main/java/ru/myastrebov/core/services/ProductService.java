@@ -38,4 +38,10 @@ public interface ProductService {
      * @return обновлённый продукт
      */
     Product updateProduct(Long productId, Product productForUpdate);
+
+    /**
+     * Удаление продукта
+     * @param productId идентифифкатор продукта
+     */
+    void delete(Long productId);
 }
