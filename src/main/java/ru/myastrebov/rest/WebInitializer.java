@@ -1,6 +1,7 @@
 package ru.myastrebov.rest;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+import ru.myastrebov.core.security.SecurityConfig;
 
 /**
  * @author Maxim
@@ -8,7 +9,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 public class WebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[]{};
+        return new Class<?>[]{SecurityConfig.class};
     }
 
     @Override

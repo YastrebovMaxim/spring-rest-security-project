@@ -1,9 +1,11 @@
 package ru.myastrebov.rest.controllers;
 
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,9 +34,12 @@ public class ProductsController {
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     public ResponseEntity<?> getAllProducts() {
-        return ResponseEntity.ok(new ProductAsm().toResources(productService.getAllProducts()));
+
+//        return ResponseEntity.ok(new ProductAsm().toResources(productService.getAllProducts()));
+        return ResponseEntity.ok(new ProductAsm().toResources(Lists.newArrayList(new Product(1L, "tee", 4554L))));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     public ResponseEntity<?> createProduct(@RequestBody Product product) {
         try {
