@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/version")
 public class OrdersController {
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     public ResponseEntity<?> getOrders() {
         return null;

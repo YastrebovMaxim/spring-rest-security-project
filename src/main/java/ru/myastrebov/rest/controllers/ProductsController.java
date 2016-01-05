@@ -1,6 +1,5 @@
 package ru.myastrebov.rest.controllers;
 
-import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,8 +34,7 @@ public class ProductsController {
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     public ResponseEntity<?> getAllProducts() {
 
-//        return ResponseEntity.ok(new ProductAsm().toResources(productService.getAllProducts()));
-        return ResponseEntity.ok(new ProductAsm().toResources(Lists.newArrayList(new Product(1L, "tee", 4554L))));
+        return ResponseEntity.ok(new ProductAsm().toResources(productService.getAllProducts()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -63,6 +61,7 @@ public class ProductsController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductResource productResource) {
         try {
@@ -73,6 +72,7 @@ public class ProductsController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteProduct(@PathVariable("productId") Long productId) {
         try {
