@@ -1,17 +1,24 @@
 package ru.myastrebov.core.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+import ru.myastrebov.core.BaseBusinessConfiguration;
+import ru.myastrebov.core.security.authontication.TokenAuthenticationFilter;
 
 /**
  * @author Maxim
@@ -19,6 +26,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 @Configuration
 @ComponentScan
 @EnableWebSecurity
+@Import(BaseBusinessConfiguration.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -29,13 +37,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Autowired
+    private TokenAuthenticationFilter tokenAuthenticationFilter;
+
+    @Autowired
     private LogoutSuccessHandler logoutSuccessHandler;
 
     @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
     public void configAuthBuilder(AuthenticationManagerBuilder builder) throws Exception {
-        builder
-                .inMemoryAuthentication()
-                .withUser("user").password("password").roles(UserRole.ADMIN.getName(), UserRole.USER.getName());
+        builder.userDetailsService(userDetailsService);
+    }
+
+    @Bean(name="myAuthenticationManager")
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     protected void configure(HttpSecurity http) throws Exception {
@@ -44,15 +62,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf().disable()
             .authorizeRequests()
                     .anyRequest().permitAll()
-//                .antMatchers(HttpMethod.POST, "/api/version/products/**").hasRole(UserRole.ADMIN.getName())
-//                .antMatchers(HttpMethod.PUT, "/api/version/products/**").hasRole(UserRole.ADMIN.getName())
-//                .antMatchers(HttpMethod.DELETE, "/api/version/products/**").hasRole(UserRole.ADMIN.getName())
-//                .antMatchers(HttpMethod.GET, "/api/version/products/**").permitAll()
-//                .antMatchers(HttpMethod.GET, "/api/version/orders/**").hasRole(UserRole.ADMIN.getName())
                 .and()
-            /*.exceptionHandling()
-                .authenticationEntryPoint(unauthorizedHandler)
-                .and()*/
+            .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+            .anonymous()
+                .and()
+            .securityContext()
+                .and()
             .formLogin()
                 .successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
@@ -62,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .logoutSuccessHandler(logoutSuccessHandler)
                 .and()
-//            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ;
+        http.addFilterBefore(tokenAuthenticationFilter, AbstractPreAuthenticatedProcessingFilter.class);
     }
 }

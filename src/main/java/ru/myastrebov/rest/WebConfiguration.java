@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import ru.myastrebov.core.BaseBusinessConfiguration;
 import ru.myastrebov.core.security.SecurityConfig;
 
 /**
@@ -16,7 +15,7 @@ import ru.myastrebov.core.security.SecurityConfig;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"ru.myastrebov.rest.controllers"})
-@Import({BaseBusinessConfiguration.class, SecurityConfig.class})
+@Import({SecurityConfig.class})
 public class WebConfiguration {
     @Bean
     public ViewResolver viewResolver() {

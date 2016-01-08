@@ -1,4 +1,4 @@
-package ru.myastrebov.rest.versions.v1.controllers;
+package ru.myastrebov.rest.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.myastrebov.core.Product;
 import ru.myastrebov.core.services.ProductService;
-import ru.myastrebov.rest.controllers.ProductsController;
 import ru.myastrebov.rest.resources.ProductResource;
 
 import static org.hamcrest.CoreMatchers.endsWith;
